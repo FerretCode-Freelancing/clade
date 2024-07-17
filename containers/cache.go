@@ -14,6 +14,10 @@ func GetCache() ([]Request, error) {
 		return nil, err
 	}
 
+	if len(bytes) == 0 {
+		return nil, err
+	}
+
 	if err := json.Unmarshal(bytes, &requests); err != nil {
 		return nil, err
 	}
@@ -76,6 +80,17 @@ func readCacheFile() ([]byte, error) {
 	cacheFile, err := getCacheFilePath()
 	if err != nil {
 		return nil, err
+	}
+
+	if _, err := os.Stat(cacheFile); err != nil {
+		if !os.IsNotExist(err) {
+			return nil, err
+		}
+
+		_, err := os.Create(cacheFile)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	bytes, err := os.ReadFile(cacheFile)

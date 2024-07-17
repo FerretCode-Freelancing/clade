@@ -160,6 +160,12 @@ func main() {
 			handleError(w, err)
 		})
 	})
+
+	if os.Getenv("CLADE_CERT_FILE") != "" && os.Getenv("CLADE_KEY_FILE") != "" {
+		http.ListenAndServeTLS(":3002", os.Getenv("CLADE_CERT_FILE"), os.Getenv("CLADE_KEY_FILE"), r)
+	} else {
+		http.ListenAndServe(":3002", r)
+	}
 }
 
 func handleError(w http.ResponseWriter, err error) {
